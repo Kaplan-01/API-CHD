@@ -10,4 +10,4 @@ more-itertools==5.0.0
 six==1.14.0
 virtualenv==20.0.4
 web.py==0.40
-zipp==3.0.0
+zipp==1.1.1

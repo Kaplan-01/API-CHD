@@ -4,7 +4,7 @@ import csv
 import json 
 
 
-class Alumnos:
+class Put:
 
     def __init__(self): 
         pass 
@@ -13,8 +13,8 @@ class Alumnos:
         try:
             data = web.input() 
             if data['token'] == "4321": 
-                if data['action'] == 'get': 
-                    result = self.actionGet() 
+                if data['action'] == 'put': 
+                    result = self.actionPut() 
                     return json.dumps(result) 
                 else:
                     result = {} 
@@ -30,7 +30,7 @@ class Alumnos:
             return json.dumps(result) 
 
     @staticmethod
-    def actionGet():
+    def actionPut():
         try:
             result = {} 
             result['status'] = "200 Ok" 

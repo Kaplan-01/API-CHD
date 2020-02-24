@@ -1,3 +1,5 @@
+# Version 0.2.0
+
 import web 
 import app 
 import csv 
@@ -5,7 +7,7 @@ import json
 
 
 class Search:
-    
+    file="/static/csv/alumnos.csv"
     def __init__(self): 
         pass 
 
@@ -14,17 +16,13 @@ class Search:
             data = web.input() 
             if data['token'] == "4321": 
                 if data['action'] == 'search':
-                    if data['matricula'] == "17180389": 
-                        bus = self.actionSearch() 
-                        return json.dumps(bus) 
-                    else:
-                        bus = {} 
-                        bus['status'] = "Not Found It"
-                        return json.dumps(bus) 
+                    matricula=data['matricula']
+                    bus2 = self.actionSearch(self.file,matricula) 
+                    return json.dumps(bus2) 
                 else:
-                    bus = {} 
-                    bus['status'] = "Command not found"
-                    return json.dumps(bus) 
+                    bus2 = {} 
+                    bus2['status'] = "Command not found"
+                    return json.dumps(bus2) 
             else:
                 bus = {} 
                 bus['bus'] = "Invalid Token"
@@ -35,24 +33,22 @@ class Search:
             return json.dumps(bus) 
 
     @staticmethod
-    def actionSearch():
+    def actionSearch(file, matricula):
         try:
-            bus = {} 
-            bus['status'] = "200 Ok" 
-            file = 'static/csv/alumnos.csv' 
-            with open(file,'r') as csvfile: 
+            bus = []
+            bus2 = {} 
+            with open('static/csv/alumnos.csv','r') as csvfile: 
                 reader = csv.DictReader(csvfile) 
-                alumnos = [] 
                 for row in reader: 
-                    fila = {} 
-                    fila['matricula'] = row['matricula']  
-                    fila['nombre'] = row['nombre'] 
-                    fila['primer_apellido'] = row['primer_apellido'] 
-                    fila['segundo_apellido'] = row['segundo_apellido'] 
-                    fila['carrera'] = row['carrera'] 
-                    alumnos.append(fila) 
-                    bus['alumnos'] = alumnos 
-            return bus 
+                    if(matricula==row['matricula']):
+                        bus.append(row)
+                        bus2['status']="200 Ok"
+                        bus2['alumnos']=bus
+                        break
+                    else: 
+                        bus2={}
+                        bus2['status']="No esta registrado"
+            return bus2 
         except  Exception as e:
             bus = {}
             bus['status'] = "Error"

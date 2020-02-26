@@ -1,3 +1,5 @@
+# Version 0.5.0
+
 import web 
 import app 
 import csv 
@@ -5,7 +7,7 @@ import json
 
 
 class Update:
-    
+    file="/static/csv/alumnos.csv"
     def __init__(self): 
         pass 
 
@@ -14,12 +16,13 @@ class Update:
             data = web.input() 
             if data['token'] == "4321": 
                 if data['action'] == 'update':
-                    bus = self.actionUpdate() 
-                    return json.dumps(bus) 
+                    matricula=data['matricula']
+                    bus2 = self.actionUpdate(self.file,matricula) 
+                    return json.dumps(bus2) 
                 else:
-                    bus = {} 
-                    bus['status'] = "Command not found"
-                    return json.dumps(bus) 
+                    bus2 = {} 
+                    bus2['status'] = "Command not found"
+                    return json.dumps(bus2) 
             else:
                 bus = {} 
                 bus['bus'] = "Invalid Token"
@@ -30,24 +33,24 @@ class Update:
             return json.dumps(bus) 
 
     @staticmethod
-    def actionUpdate():
+    def actionUpdate(file, matricula):
         try:
-            bus = {} 
-            bus['status'] = "200 Ok" 
-            file = 'static/csv/alumnos.csv' 
-            with open(file,'r') as csvfile: 
-                reader = csv.DictReader(csvfile) 
-                alumnos = [] 
+            bus = []
+            bus2 = {} 
+            with open('static/csv/alumnos.csv','r') as csvfile: 
+                reader = csv.DictReader(csvfile)   
                 for row in reader: 
-                    fila = {} 
-                    fila['matricula'] = row['matricula']  
-                    fila['nombre'] = row['nombre'] 
-                    fila['primer_apellido'] = row['primer_apellido'] 
-                    fila['segundo_apellido'] = row['segundo_apellido'] 
-                    fila['carrera'] = row['carrera'] 
-                    alumnos.append(fila) 
-                    bus['alumnos'] = alumnos 
-            return bus 
+                    if(matricula==row['matricula']):
+                        row['new'] = "123456789"
+                        bus.append(row)
+                        print(bus)
+                        bus2['status']="200 Ok"
+                        bus2['alumnos']="Elemento Actualizado"
+                        break
+                    else: 
+                        bus2={}
+                        bus2['status']="Hm... Algo ha salido mal"
+            return bus2 
         except  Exception as e:
             bus = {}
             bus['status'] = "Error"

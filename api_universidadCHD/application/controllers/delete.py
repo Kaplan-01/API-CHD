@@ -1,3 +1,5 @@
+# Version 0.2.0
+
 import web 
 import app 
 import csv 
@@ -5,7 +7,7 @@ import json
 
 
 class Delete:
-
+    file="/static/csv/alumnos.csv"
     def __init__(self): 
         pass 
 
@@ -13,44 +15,43 @@ class Delete:
         try:
             data = web.input() 
             if data['token'] == "4321": 
-                if data['action'] == 'delete': 
-                    result = self.actionDelete() 
-                    return json.dumps(result) 
+                if data['action'] == 'delete':
+                    matricula=data['matricula']
+                    bus2 = self.actionDelete(self.file,matricula) 
+                    return json.dumps(bus2) 
                 else:
-                    result = {} 
-                    result['status'] = "Command not found"
-                    return json.dumps(result) 
+                    bus2 = {} 
+                    bus2['status'] = "Command not found"
+                    return json.dumps(bus2) 
             else:
-                result = {} 
-                result['status'] = "Invalid Token"
-                return json.dumps(result) 
+                bus = {} 
+                bus['bus'] = "Invalid Token"
+                return json.dumps(bus) 
         except Exception as e:
-            result = {} 
-            result['status'] = "Values missing, sintaxis: alumnos?action=get&token=XXXX"
-            return json.dumps(result) 
+            bus = {} 
+            bus['status'] = "Values missing, sintaxis: alumnos?action=get&token=XXXX"
+            return json.dumps(bus) 
 
     @staticmethod
-    def actionDelete():
+    def actionDelete(file, matricula):
         try:
-            result = {} 
-            result['status'] = "200 Ok" 
-            file = 'static/csv/alumnos.csv' 
-            with open(file,'r') as csvfile: 
-                reader = csv.DictReader(csvfile) 
-                alumnos = [] 
+            bus = []
+            bus2 = {} 
+            with open('static/csv/alumnos.csv','r') as csvfile: 
+                reader = csv.DictReader(csvfile)   
                 for row in reader: 
-                    fila = {} 
-                    fila['matricula'] = row['matricula'] 
-                    fila['nombre'] = row['nombre'] 
-                    fila['primer_apellido'] = row['primer_apellido'] 
-                    fila['segundo_apellido'] = row['segundo_apellido'] 
-                    fila['carrera'] = row['carrera'] 
-                    alumnos.append(fila)
-                result['alumnos'] = alumnos 
-            return result 
+                    if(matricula==row['matricula']):
+                        bus.append(row)
+                        bus.remove(row)
+                        print(bus)
+                        bus2['status']="200 Ok"
+                        bus2['alumnos']="Elemento borrado"
+                        break
+                    else: 
+                        bus2={}
+                        bus2['status']="Ese elemento no existe"
+            return bus2 
         except  Exception as e:
-            result = {}
-            result['status'] = "Error"
-            return result 
-
-#TODO revisar el codigo 
+            bus = {}
+            bus['status'] = "Error"
+            return bus 

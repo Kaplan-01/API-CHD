@@ -1,3 +1,7 @@
+# Version 0.1.0
+# EJEMPLO URL 
+# http://localhost:8080/alumnos?action=get&token=4321
+
 import web 
 import app 
 import csv 
@@ -54,3 +58,4 @@ class Alumnos:
             return result 
 
 #TODO revisar el codigo 
+# Componentes de un diccionario una key y un value

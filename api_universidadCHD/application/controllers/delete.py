@@ -1,57 +1,78 @@
 # Version 0.4.0
 
-import web 
-import app 
-import csv 
-import json 
+# EJEMPLO URL 
+# http://localhost:8080/delete?action=delete&token=4321&matricula=1718110389
+
+import web
+import app
+import csv
+import json
 
 
 class Delete:
-    file="/static/csv/alumnos.csv"
-    def __init__(self): 
-        pass 
+    file = "/static/csv/alumnos.csv"
+
+    def __init__(self):
+        pass
 
     def GET(self):
         try:
-            data = web.input() 
-            if data['token'] == "4321": 
-                if data['action'] == 'delete':
-                    matricula=data['matricula']
-                    bus2 = self.actionDelete(self.file,matricula) 
-                    return json.dumps(bus2) 
-                else:
-                    bus2 = {} 
-                    bus2['status'] = "Command not found"
-                    return json.dumps(bus2) 
+            data = web.input()
+            if data['token'] == "4321":
+                if data['action'] == "delete":
+                    matricula = data['matricula']
+                    resultC = self.actionDelete(self.file, matricula)
+                    return json.dumps(resultC)
             else:
-                bus = {} 
-                bus['bus'] = "Invalid Token"
-                return json.dumps(bus) 
+                result = {}
+                result['status'] = "Invalid Token"
+                return json.dumps(result)
         except Exception as e:
-            bus = {} 
-            bus['status'] = "Values missing, sintaxis: alumnos?action=get&token=XXXX"
-            return json.dumps(bus) 
+            result = {}
+            result['status'] = "Values missing"
+            return json.dumps(result)
 
     @staticmethod
     def actionDelete(file, matricula):
         try:
-            bus = []
-            bus2 = {} 
-            with open('static/csv/alumnos.csv','r') as csvfile: 
-                reader = csv.DictReader(csvfile)   
-                for row in reader: 
-                    if(matricula==row['matricula']):
-                        bus.append(row)
-                        bus.remove(row)
-                        print(bus)
-                        bus2['status']="200 Ok"
-                        bus2['alumnos']="Elemento borrado"
-                        break
-                    else: 
-                        bus2={}
-                        bus2['status']="Ese elemento no existe"
-            return bus2 
-        except  Exception as e:
-            bus = {}
-            bus['status'] = "Error"
-            return bus 
+            result = []
+            resultC = {}
+            with open('static/csv/alumnos.csv', 'r') as csvfile:
+                reader = csv.DictReader(csvfile)
+                for row in reader:
+                    if(row['matricula'] != matricula):
+                        resultC['status'] = "200 Ok"
+                        result.append(row)
+                        resultC['alumnos'] = result
+            longitud = (len(result))
+            with open('static/csv/alumnos.csv', 'w', newline='') as csvfile:
+                writer = csv.writer(csvfile)
+                bye = []
+                bye.append("matricula")
+                bye.append("nombre")
+                bye.append("primer_apellido")
+                bye.append("segundo_apellido")
+                bye.append("carrera")
+                writer.writerow(bye)
+                data = []
+                for x in range(0, longitud):
+                    data.append(result[x]['matricula'])
+                    data.append(result[x]['nombre'])
+                    data.append(result[x]['primer_apellido'])
+                    data.append(result[x]['segundo_apellido'])
+                    data.append(result[x]['carrera'])
+                    writer.writerow(data)
+                    data = []
+            results = []
+            resultsC = {}
+            with open('static/csv/alumnos.csv', 'r') as csvfile:
+                reader = csv.DictReader(csvfile)
+                for row in reader:
+                    results.append(row)
+                    resultsC['status'] = "200 Ok"
+                    resultsC['alumnos'] = result
+            return resultsC
+        except Exception as e:
+            result = {}
+            result['status'] = "Error"
+        return result

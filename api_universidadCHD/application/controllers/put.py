@@ -17,7 +17,12 @@ class Put:
             if data['token'] == "4321": 
                 if data['action'] == 'put':
                     matricula=data['matricula']
-                    bus2 = self.actionPut(self.file,matricula) 
+                    nombre=data['nombre']
+                    primer_apellido=data['primer_apellido']
+                    segundo_apellido=data['segundo_apellido']
+                    carrera=data['carrera']
+
+                    bus2 = self.actionPut(self.file,matricula,nombre,primer_apellido,segundo_apellido,carrera) 
                     return json.dumps(bus2) 
                 else:
                     bus2 = {} 
@@ -33,25 +38,29 @@ class Put:
             return json.dumps(bus) 
 
     @staticmethod
-    def actionPut(file, matricula):
+    def actionPut(file, matricula,nombre,primer_apellido,segundo_apellido,carrera):
         try:
+            busR = []
             bus = []
             bus2 = {} 
-            with open('static/csv/alumnos.csv','r') as csvfile: 
-                reader = csv.DictReader(csvfile)   
+            busR.append(matricula)
+            busR.append(nombre)
+            busR.append(primer_apellido)
+            busR.append(segundo_apellido)
+            busR.append(carrera)
+            with open('static/csv/alumnos.csv','n', nuevoRegistro='') as csvfile: 
+                writer = csv.writer(csvfile)
+                writer.writerow(busR)
+            with open('static/csv/alumnos.csv','r') as csvfile:
+                reader = csv.DictReader(csvfile)
                 for row in reader: 
-                    if(matricula==row['matricula']):
-                        row['matricula'] = "123456789"
-                        bus.append(row)
-                        print(bus)
-                        bus2['status']="200 Ok"
-                        bus2['alumnos']="Elemento Insertado"
-                        break
-                    else: 
-                        bus2={}
-                        bus2['status']="Hm... Algo ha salido mal"
+                    bus.append(row)
+                    bus2['status']="200 Ok"
+                    bus2['alumnos']=bus
             return bus2 
         except  Exception as e:
             bus = {}
             bus['status'] = "Error"
             return bus 
+
+# http://localhost:8080/put?action=put&token=4321&matricula=1718110381&nombre=Carmn&primer_apellido=Kapan&segundo_apellido=Daz&carrera=IN

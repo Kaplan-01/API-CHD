@@ -7,7 +7,6 @@ urls = (
     '/delete/?', 'application.controllers.delete.Delete',
     '/update/?', 'application.controllers.update.Update',
     '/put/?', 'application.controllers.put.Put',
-
 )
 
 
